@@ -12,12 +12,25 @@ import { withStyles } from '@material-ui/core/styles';
 import withRoot from '../withRoot';
 import { CircularProgress } from '@material-ui/core';
 
-const apiUrl = `process.env.REACT_APP_API_URL`;
+const apiUrl = `${process.env.REACT_APP_API_URL}`;
 
 const styles = theme => ({
   root: {
     textAlign: 'center',
     paddingTop: theme.spacing.unit * 20,
+  },
+  proverb: {
+    marginTop: theme.spacing.unit * 6,
+    padding: theme.spacing.unit * 3,
+    fontSize: '2em',
+  },
+  ul: {
+    listStyleType: 'none',
+    padding: 0,
+  },
+  historyPanel: {
+    margin: 'auto',
+    textAlign: 'center',
   },
 });
 
@@ -29,15 +42,15 @@ class Index extends React.Component {
     isLoading: false,
   };
 
-  handleFieldChange = (input) => {
-    let state = {...this.state};
-    state.input = input;
-    this.setState({ state });
-    console.log(state);
+  handleFieldChange = (e) => {
+    const input = e.target.value;
+    this.setState({ input });
+    console.log(this.state);
   }
 
   handleSubmit = (e, input) => {
     if (input) this.getProverb(input);
+    console.log('getting proverb for: ', input)
     e.preventDefault();
   }
   getProverb = (input) => {
@@ -51,25 +64,25 @@ class Index extends React.Component {
       : state.lastTenProverbs.pop() && state.lastTenProverbs.unshift(proverb)
     };
 
-    state.isLoading=true;
-    this.setState({ state });
+    let isLoading = true;
+    this.setState({ isLoading });
 
+    console.log(apiUrl);
     try { 
       fetch(`${apiUrl}/${input}`)
       .then( (response) => {
         // Turn on loading
         if (response.ok) {
-          return response;
+          return response.json();
         } else {
           throw new Error("Something went wrong, can't generate proverb.")
         }
       })
       .then( result => {
-        state.isLoading = false;
+        isLoading = false;
         const proverb = result.proverb;
-        state.proverb = proverb;
         lastTenProverbsUpdate(proverb);
-        this.setState({ state });
+        this.setState({ proverb, isLoading });
       })
     }
     catch(error) {
@@ -106,17 +119,23 @@ class Index extends React.Component {
             />
           </form>
         </div>
-        <Paper>
+        <Paper className={proverb}>
           {
             isLoading
             ? <CircularProgress />
-            : <Typography>
-                {proverb}
-              </Typography>
+            : <Typography 
+            style={{ 
+              fontFamily: "vt323", 
+              fontSize: "150%"
+            }} 
+            variant='subheading'
+            paragraph={true}>
+              {proverb}
+            </Typography>
           }
         </Paper>
         <ExpansionPanel className={classes.historyPanel}>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+          <ExpansionPanelSummary className={classes.historyPanel} expandIcon={<ExpandMoreIcon />}>
             <Typography variant="body2" color="textSecondary">
               Show last 10 proverbs
             </Typography>
@@ -124,13 +143,16 @@ class Index extends React.Component {
           <ExpansionPanelDetails>
             <ul className={classes.ul}>
               {
-                lastTenProverbs.map((proverb, index) =>
-                  <li key={JSON.stringify(index + proverb[1])}> 
+                !proverb
+                ? ''
+                : lastTenProverbs.map((currentProverb, index) => 
+                  <li key={JSON.stringify(index + currentProverb[1])}> 
                       <Typography paragraph={true} className={classes.historyDesc}>
-                        {proverb}
+                        {currentProverb}
                       </Typography>
                   </li>                
                 )
+                
               }
             </ul>
           </ExpansionPanelDetails>
