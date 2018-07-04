@@ -11,9 +11,7 @@ import 'typeface-vt323';
 const theme = createMuiTheme({
   palette: {
     primary: {
-      light: purple[300],
-      main: purple[500],
-      dark: purple[700],
+      main: '#FEB415',
     },
     secondary: {
       light: green[300],
