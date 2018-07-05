@@ -1,21 +1,11 @@
-# Create React App example
+# Zenobot
 
-## How to use
+Check it out via  [garrettwatson.io](https://garrettwatson.io)
 
-Download the example [or clone the repo](https://github.com/mui-org/material-ui):
+# About
 
-```bash
-curl https://codeload.github.com/mui-org/material-ui/tar.gz/master | tar -xz --strip=2 material-ui-master/examples/create-react-app
-cd create-react-app
-```
+Zenobot is an LSTM neural network that was trained, using PyTorch, on a small dataset of 2000 proverbs.
 
-Install it and run:
+The model is served up via a simple Flask API, [code here](https://github.com/garrowat/zenobot)
 
-```bash
-npm install
-npm run start
-```
-
-## The idea behind the example
-
-[Create React App](https://github.com/facebookincubator/create-react-app) with no build configuration.
+Zenobot does its very best to predict the next character in a string, stopping when it predicts a period.
