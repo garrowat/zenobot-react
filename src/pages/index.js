@@ -7,9 +7,12 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import CodeIcon from '@material-ui/icons/Code';
 import InfoIcon from '@material-ui/icons/Info';
+import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
 import Paper from '@material-ui/core/Paper';
+import Popover from '@material-ui/core/Popover';
 import TextField from '@material-ui/core/TextField';
+import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import withRoot from '../withRoot';
@@ -22,22 +25,28 @@ const apiUrl = `${process.env.REACT_APP_API_URL}`;
 const styles = theme => ({
   root: {
     textAlign: 'center',
-    paddingTop: theme.spacing.unit * 10,
+    paddingTop: theme.spacing.unit * 18,
   },
   homeLink: {
     position: 'absolute',
     left: 0,
     top: 0,
-    margin: theme.spacing.unit * 3,
+    margin: theme.spacing.unit,
+    fontSize: '20%',
   },
   projectLinks: {
     margin: 'auto',
+  },
+  popOver: {
+    margin: theme.spacing.unit * 2,
+    maxWidth: 300,
+    height: 'auto',
   },
   botImageContainer: {
     margin: 'auto',
     marginTop: theme.spacing.unit * 6,
     marginBottom: theme.spacing.unit * 6,
-    maxWidth: '311px',
+    maxWidth: '200px',
     height: 'auto',
   },
   botImage: {
@@ -65,6 +74,7 @@ class Index extends React.Component {
     proverb: '',
     lastTenProverbs: [],
     isLoading: false,
+    popOverOpen: false,
   };
 
   handleFieldChange = (e) => {
@@ -78,6 +88,15 @@ class Index extends React.Component {
     console.log('getting proverb for: ', input)
     e.preventDefault();
   }
+
+  handlePopoverClick = (event) => {
+    this.setState({ popOverOpen: event.currentTarget });
+  }
+
+  handlePopoverClose = () => {
+    this.setState({ popOverOpen: null });
+  }
+
   getProverb = (input) => {
     let state = {...this.state};
     
@@ -117,7 +136,7 @@ class Index extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { proverb, lastTenProverbs, isLoading, input } = this.state;
+    const { proverb, lastTenProverbs, isLoading, input, popOverOpen } = this.state;
 
     return (
       <div className={classes.root}>
@@ -141,15 +160,42 @@ class Index extends React.Component {
           </Typography>
         </Hidden>
 
-        <div className={classes.projectLinks}>
+        <div className={classes.projectLinks}>       
           <a href="https://github.com/garrowat/zenobot-react" style={{textDecoration: "none"}}>
-            <CodeIcon color="primary" />
+            <Tooltip title="github">
+              <IconButton color="primary">
+                <CodeIcon />
+              </IconButton>
+            </Tooltip>
           </a>
-          <a href="" style={{textDecoration: "none"}}>
-            <InfoIcon color="primary" />
-          </a>
-
+          <Tooltip title="about">
+            <IconButton color="primary" onClick={this.handlePopoverClick}>
+              <InfoIcon />
+            </IconButton>
+          </Tooltip>
+          <Popover
+            open={Boolean(popOverOpen)}
+            anchorEl={popOverOpen}
+            onClose={this.handlePopoverClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'center',
+            }}
+          >
+            <Typography className={classes.popOver} paragraph={true} variant="body2" gutterBottom>
+              {`
+              Zenobot is an LSTM neural network that was trained, using PyTorch, on a small dataset of 2000 proverbs.
+              The model is served up via a simple Flask API.
+              Zenobot does its very best to predict the next character in a string, stopping when it predicts a period.
+              `}
+            </Typography>
+          </Popover>
         </div>
+
         <div className={classes.botImageContainer}>
           <img src={zenobot} className={classes.botImage} />
         </div>
@@ -202,6 +248,7 @@ class Index extends React.Component {
             </ul>
           </ExpansionPanelDetails>
         </ExpansionPanel>
+        <Typography variant="caption">© 2018 Garrett Watson. All rights reserved.</Typography>
       </div>
     );
   }
