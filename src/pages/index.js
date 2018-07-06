@@ -43,15 +43,20 @@ const styles = theme => ({
     height: 'auto',
   },
   botImageContainer: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
     margin: 'auto',
-    marginTop: theme.spacing.unit * 6,
-    marginBottom: theme.spacing.unit * 6,
-    maxWidth: '200px',
+    marginTop: theme.spacing.unit * 2,
+    marginRight: theme.spacing.unit * 2,
+    maxWidth: '60px',
     height: 'auto',
   },
   botImage: {
     width: '100%',
     height: 'auto',
+    filter: 'hue-rotate(0deg)',
+    transition: 'all 0.5s ease-in-out',
   },
   proverbBox: {
     margin: theme.spacing.unit * 6,
@@ -75,6 +80,8 @@ class Index extends React.Component {
     lastTenProverbs: [],
     isLoading: false,
     popOverOpen: false,
+    botImageRotation: 0,
+    botImageHueRotation: 0,
   };
 
   handleFieldChange = (e) => {
@@ -95,6 +102,20 @@ class Index extends React.Component {
 
   handlePopoverClose = () => {
     this.setState({ popOverOpen: null });
+  }
+
+  handleBotClick = () => {
+    if (this.state.botImageRotation > 10000) {
+      this.setState({
+        botImageRotation: 0,
+        botImageHueRotation: 0,
+      })
+    } else {
+      this.setState({ 
+        botImageRotation: this.state.botImageRotation + 360,
+        botImageHueRotation: this.state.botImageHueRotation + 360,
+      })
+    }
   }
 
   getProverb = (input) => {
@@ -186,19 +207,45 @@ class Index extends React.Component {
               horizontal: 'center',
             }}
           >
-            <Typography className={classes.popOver} paragraph={true} variant="body2" gutterBottom>
+            <Typography 
+            className={classes.popOver} 
+            paragraph={true} 
+            variant="body2" 
+            gutterBottom
+            >
               {`
-              Zenobot is an LSTM neural network that was trained, using PyTorch, on a small dataset of 2000 proverbs.
+              Zenobot is an LSTM neural network that was trained, using PyTorch and fast.ai, on a small dataset of 2000 proverbs.
               The model is served up via a simple Flask API.
               Zenobot does its very best to predict the next character in a string, stopping when it predicts a period.
+              `}
+            </Typography>
+            <Typography 
+            className={classes.popOver} 
+            paragraph={true} 
+            variant="body2" 
+            gutterBottom
+            >
+              <span style={{fontWeight: "bold"}}>Future plans:</span>
+              {`
+              add more models ("brains"), each trained on more proverbs, 
+              so that humans can toggle between brains and see the effect on proverb generation. 
               `}
             </Typography>
           </Popover>
         </div>
 
-        <div className={classes.botImageContainer}>
-          <img src={zenobot} className={classes.botImage} />
-        </div>
+        <Tooltip title="WeeeOo0Oo0oo!">
+          <div className={classes.botImageContainer} onClick={this.handleBotClick}>
+            <img 
+            src={zenobot} 
+            className={classes.botImage} 
+            style={{ 
+              filter: `hue-rotate(${this.state.botImageHueRotation}deg)`, 
+              transform: `rotate(${this.state.botImageRotation}deg)`
+            }} 
+            />
+          </div>
+        </Tooltip>
 
         <div className={classes.description}>
           <Typography variant="body2" style={{ fontFamily: "vt323", fontSize: "1.5em"}}>
