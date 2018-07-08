@@ -51,6 +51,7 @@ const styles = theme => ({
     marginRight: theme.spacing.unit * 2,
     maxWidth: '60px',
     height: 'auto',
+    transition: 'all 0.5s ease-in-out',
   },
   botImage: {
     width: '100%',
@@ -82,6 +83,8 @@ class Index extends React.Component {
     popOverOpen: false,
     botImageRotation: 0,
     botImageHueRotation: 0,
+    botImageSize: 100,
+    botImagePosition: 0,
   };
 
   handleFieldChange = (e) => {
@@ -105,10 +108,19 @@ class Index extends React.Component {
   }
 
   handleBotClick = () => {
-    if (this.state.botImageRotation > 10000) {
+    if (this.state.botImageRotation > 3000) {
       this.setState({
         botImageRotation: 0,
         botImageHueRotation: 0,
+      })
+      this.state.botImageSize < 500
+      ? this.setState({ 
+        botImageSize: this.state.botImageSize + 100,
+        botImagePosition: this.state.botImagePosition + 100,
+      })
+      : this.setState({ 
+        botImageSize: 100,
+        botImagePosition: 0,
       })
     } else {
       this.setState({ 
@@ -235,13 +247,19 @@ class Index extends React.Component {
         </div>
 
         <Tooltip title="WeeeOo0Oo0oo!">
-          <div className={classes.botImageContainer} onClick={this.handleBotClick}>
+          <div 
+          className={classes.botImageContainer} 
+          onClick={this.handleBotClick}
+          style={{ right: this.state.botImagePosition }}
+          >
             <img 
             src={zenobot} 
             className={classes.botImage} 
             style={{ 
               filter: `hue-rotate(${this.state.botImageHueRotation}deg)`, 
-              transform: `rotate(${this.state.botImageRotation}deg)`
+              transform: `rotate(${this.state.botImageRotation}deg)`,
+              width: `${this.state.botImageSize}%`,
+              height: 'auto',
             }} 
             />
           </div>
