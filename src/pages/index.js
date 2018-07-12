@@ -169,7 +169,6 @@ class Index extends React.Component {
 
   getProverb = (input) => {
     let state = {...this.state};
-    apiUrl = `http://127.0.0.1:5000/zenobot/proverb`;
     const lastTenProverbsUpdate = (proverb) => {
       // Maintain a list of only the last ten proverbs for this session
       let list = state.lastTenProverbs;
