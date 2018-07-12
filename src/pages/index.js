@@ -5,6 +5,12 @@ import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 import CodeIcon from '@material-ui/icons/Code';
 import InfoIcon from '@material-ui/icons/Info';
 import IconButton from '@material-ui/core/IconButton';
@@ -18,14 +24,16 @@ import { withStyles } from '@material-ui/core/styles';
 import withRoot from '../withRoot';
 import { CircularProgress } from '@material-ui/core';
 
-import zenobot from '../images/zenobot.png'
+import zenobot0 from '../images/zenobot0.png'
+import zenobot1 from '../images/zenobot1.png'
+import zenobot2 from '../images/zenobot2.png'
 
-const apiUrl = `${process.env.REACT_APP_API_URL}`;
+let apiUrl = `${process.env.REACT_APP_API_URL}`;
 
 const styles = theme => ({
   root: {
     textAlign: 'center',
-    paddingTop: theme.spacing.unit * 18,
+    paddingTop: theme.spacing.unit * 15,
   },
   homeLink: {
     position: 'absolute',
@@ -33,6 +41,10 @@ const styles = theme => ({
     top: 0,
     margin: theme.spacing.unit,
     fontSize: '20%',
+  },
+  formControl: {
+    margin: 'auto',
+    marginBottom: theme.spacing.unit * 2,
   },
   projectLinks: {
     margin: 'auto',
@@ -76,6 +88,10 @@ const styles = theme => ({
 
 class Index extends React.Component {
   state = {
+    brain: 2,
+    brainText: 'Third Generation',
+    zenobotImage: [zenobot0, zenobot1, zenobot2],
+    botTip: [2105, 3744, 9360],
     input: '',
     proverb: '',
     lastTenProverbs: [],
@@ -91,6 +107,27 @@ class Index extends React.Component {
     const input = e.target.value;
     this.setState({ input });
     console.log(this.state);
+  }
+
+  handleBrainChange = (e) => {
+    console.log(this.state)
+    const brain = e.target.value;
+    let brainText = '';
+    switch (brain) {
+      case 0:
+        brainText = 'First Generation'
+        break;
+      case 1:
+        brainText = 'Second Generation'
+        break;
+      case 2:
+        brainText = 'Third Generation'
+        break;
+      default:
+        brainText = 'First Generation'
+        break;
+    }
+    this.setState({ brain, brainText });
   }
 
   handleSubmit = (e, input) => {
@@ -132,7 +169,7 @@ class Index extends React.Component {
 
   getProverb = (input) => {
     let state = {...this.state};
-    
+    apiUrl = `http://127.0.0.1:5000/zenobot/proverb`;
     const lastTenProverbsUpdate = (proverb) => {
       // Maintain a list of only the last ten proverbs for this session
       let list = state.lastTenProverbs;
@@ -146,7 +183,7 @@ class Index extends React.Component {
 
     console.log(apiUrl);
     try { 
-      fetch(`${apiUrl}/${input}`)
+      fetch(`${apiUrl}/${this.state.brain}/${input}`)
       .then( (response) => {
         // Turn on loading
         if (response.ok) {
@@ -169,7 +206,14 @@ class Index extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { proverb, lastTenProverbs, isLoading, input, popOverOpen } = this.state;
+    const { 
+      proverb, 
+      lastTenProverbs, 
+      isLoading, 
+      input, 
+      popOverOpen, 
+      brain
+    } = this.state;
 
     return (
       <div className={classes.root}>
@@ -180,6 +224,24 @@ class Index extends React.Component {
               Go to garrettwatson.io
             </Button>
           </a>
+        </div>
+
+        <div>
+          <form className={classes.root} autoComplete="off">
+            <FormControl className={classes.formControl}>
+              <InputLabel htmlFor="brain-helper">Select Brain</InputLabel>
+              <Select
+                value={brain}
+                onChange={this.handleBrainChange}
+                input={<Input name="brain" id="brain-helper" />}
+              >
+                <MenuItem value={0}>First Generation</MenuItem>
+                <MenuItem value={1}>Second Generation</MenuItem>
+                <MenuItem value={2}>Third Generation</MenuItem>
+              </Select>
+              <FormHelperText>Swap Zenobot's Brains</FormHelperText>
+            </FormControl>
+          </form>
         </div>
 
         <Hidden smDown>
@@ -246,14 +308,14 @@ class Index extends React.Component {
           </Popover>
         </div>
 
-        <Tooltip title="WeeeOo0Oo0oo!">
+        <Tooltip title={`Trained on ${this.state.botTip[brain]} proverbs! :D`}>
           <div 
           className={classes.botImageContainer} 
           onClick={this.handleBotClick}
           style={{ right: this.state.botImagePosition }}
           >
             <img 
-            src={zenobot} 
+            src={this.state.zenobotImage[brain]} 
             className={classes.botImage} 
             style={{ 
               filter: `hue-rotate(${this.state.botImageHueRotation}deg)`, 
