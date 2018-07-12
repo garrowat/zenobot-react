@@ -35,6 +35,11 @@ const styles = theme => ({
     textAlign: 'center',
     paddingTop: theme.spacing.unit * 15,
   },
+  brains: {
+    margin: 'auto',
+    marginTop: theme.spacing.unit,
+    marginBottom: theme.spacing.unit, 
+  },
   homeLink: {
     position: 'absolute',
     left: 0,
@@ -45,6 +50,12 @@ const styles = theme => ({
   formControl: {
     margin: 'auto',
     marginBottom: theme.spacing.unit * 2,
+  },
+  brainSelectImage: {
+    height: '20px',
+    width: 'auto',
+    margin: theme.spacing.unit,
+    marginBottom: 0,
   },
   projectLinks: {
     margin: 'auto',
@@ -105,12 +116,9 @@ class Index extends React.Component {
 
   handleFieldChange = (e) => {
     const input = e.target.value;
-    this.setState({ input });
-    console.log(this.state);
-  }
+    this.setState({ input });  }
 
   handleBrainChange = (e) => {
-    console.log(this.state)
     const brain = e.target.value;
     let brainText = '';
     switch (brain) {
@@ -132,7 +140,6 @@ class Index extends React.Component {
 
   handleSubmit = (e, input) => {
     if (input) this.getProverb(input);
-    console.log('getting proverb for: ', input)
     e.preventDefault();
   }
 
@@ -180,7 +187,6 @@ class Index extends React.Component {
     let isLoading = true;
     this.setState({ isLoading });
 
-    console.log(apiUrl);
     try { 
       fetch(`${apiUrl}/${this.state.brain}/${input}`)
       .then( (response) => {
@@ -223,24 +229,6 @@ class Index extends React.Component {
               Go to garrettwatson.io
             </Button>
           </a>
-        </div>
-
-        <div>
-          <form className={classes.root} autoComplete="off">
-            <FormControl className={classes.formControl}>
-              <InputLabel htmlFor="brain-helper">Select Brain</InputLabel>
-              <Select
-                value={brain}
-                onChange={this.handleBrainChange}
-                input={<Input name="brain" id="brain-helper" />}
-              >
-                <MenuItem value={0}>First Generation</MenuItem>
-                <MenuItem value={1}>Second Generation</MenuItem>
-                <MenuItem value={2}>Third Generation</MenuItem>
-              </Select>
-              <FormHelperText>Swap Zenobot's Brains</FormHelperText>
-            </FormControl>
-          </form>
         </div>
 
         <Hidden smDown>
@@ -374,6 +362,23 @@ class Index extends React.Component {
             </ul>
           </ExpansionPanelDetails>
         </ExpansionPanel>
+        <div>
+          <form className={classes.brains} autoComplete="off">
+            <FormControl className={classes.formControl}>
+              <InputLabel htmlFor="brain-helper">Select Brain</InputLabel>
+              <Select
+                value={brain}
+                onChange={this.handleBrainChange}
+                input={<Input name="brain" id="brain-helper" />}
+              >
+                <MenuItem value={0}><img src={zenobot0} className={classes.brainSelectImage} />First Generation</MenuItem>
+                <MenuItem value={1}><img src={zenobot1} className={classes.brainSelectImage} />Second Generation</MenuItem>
+                <MenuItem value={2}><img src={zenobot2} className={classes.brainSelectImage} />Third Generation</MenuItem>
+              </Select>
+              <FormHelperText>Swap Zenobot's Brains</FormHelperText>
+            </FormControl>
+          </form>
+        </div>
         <Typography variant="caption">© 2018 Garrett Watson. All rights reserved.</Typography>
       </div>
     );
