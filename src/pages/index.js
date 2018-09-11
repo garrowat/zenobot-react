@@ -295,7 +295,7 @@ class Index extends React.Component {
           </Popover>
         </div>
 
-        <Tooltip title={`Trained on ${this.state.botTip[brain]} proverbs! :D`}>
+        <Tooltip title={`Don't click me too much!`}>
           <div 
           className={classes.botImageContainer} 
           onClick={this.handleBotClick}
@@ -319,18 +319,26 @@ class Index extends React.Component {
             What troubles you, friend?
           </Typography>
           <form onSubmit={(e) => this.handleSubmit(e, input)}>
-            <TextField 
-            autoFocus={true}
-            value={input || ''}
-            onChange={(e) => this.handleFieldChange(e)}
-            />
+            <FormControl className={classes.formControl}>
+              <TextField 
+              autoFocus={true}
+              value={input || ''}
+              onChange={(e) => this.handleFieldChange(e)}
+              />
+              <FormHelperText>try (noun) + (verb), e.g. "life is"</FormHelperText>
+            </FormControl>
           </form>
         </div>
 
         <Paper className={classes.proverbBox}>
           {
             isLoading
-            ? <CircularProgress />
+            ? <div>
+                <CircularProgress />
+                <Typography variant="caption">
+                  Nothing happening? Please press enter again!
+                </Typography>
+              </div>
             : <Typography 
             style={{ fontFamily: "vt323", fontSize: "150%" }} 
             variant='subheading'
@@ -375,7 +383,7 @@ class Index extends React.Component {
                 <MenuItem value={1}><img src={zenobot1} className={classes.brainSelectImage} />Second Generation</MenuItem>
                 <MenuItem value={2}><img src={zenobot2} className={classes.brainSelectImage} />Third Generation</MenuItem>
               </Select>
-              <FormHelperText>Swap Zenobot's Brains</FormHelperText>
+              <FormHelperText>Trained on {this.state.botTip[brain]} proverbs!</FormHelperText>
             </FormControl>
           </form>
         </div>
