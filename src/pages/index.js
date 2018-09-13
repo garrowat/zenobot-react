@@ -275,8 +275,8 @@ class Index extends React.Component {
             gutterBottom
             >
               {`
-              Zenobot is an LSTM neural network that was trained, using PyTorch and fast.ai, on a small dataset of 2000 proverbs.
-              The model is served up via a simple Flask API.
+              Zenobot is a set of 3 LSTM neural networks that were trained, using PyTorch and fast.ai, on varying datasets of up to 10000 proverbs.
+              The models are served up via a simple Flask API.
               Zenobot does its very best to predict the next character in a string, stopping when it predicts a period.
               `}
             </Typography>
@@ -288,8 +288,9 @@ class Index extends React.Component {
             >
               <span style={{fontWeight: "bold"}}>Future plans:</span>
               {`
-              add more models ("brains"), each trained on more proverbs, 
-              so that humans can toggle between brains and see the effect on proverb generation. 
+              find and add even more words of wisdom for zenobot to learn from, 
+              and perhaps add some character/movie/book-specific quotes to the 
+              model to provide some humorous "custom" brains
               `}
             </Typography>
           </Popover>
